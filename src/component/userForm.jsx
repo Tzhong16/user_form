@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import Input from './common/input';
+import React from 'react';
 import Joi from 'joi-browser';
+import Form from './common/form';
+import axios from 'axios';
 
-class UserForm extends Component {
+const apiEndPoint = 'https://jsonplaceholder.typicode.com/users';
+
+class UserForm extends Form {
   state = {
-    user: {
+    data: {
       email: '',
       username: '',
       name: '',
@@ -15,6 +18,7 @@ class UserForm extends Component {
   };
 
   schema = {
+    id: Joi.number(),
     email: Joi.string()
       .required()
       .label('Email'),
@@ -32,87 +36,52 @@ class UserForm extends Component {
       .label('Website')
   };
 
-  validate = () => {
-    const option = { abortEarly: false };
-    const { error } = Joi.validate(this.state.user, this.schema, option);
+  async componentDidMount() {
+    const userId = this.props.match.params.id;
+    if (userId === 'new') return;
 
-    if (!error) return null;
+    const { data: user } = await axios.get(apiEndPoint + '/' + userId);
+    if (!user) return this.props.history.replace('/not-found');
+    console.log(user);
 
-    const errors = {};
-    for (let item of error.details) errors[item.path[0]] = item.message;
+    this.setState({ data: this.mapToViewModel(user) });
+  }
 
-    return errors;
-  };
+  mapToViewModel(user) {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      phone: user.phone,
+      website: user.website
+    };
+  }
 
-  validateProperty = ({ name, value }) => {
-    const obj = { [name]: value };
-    const schema = { [name]: this.schema[name] };
-    const { error } = Joi.validate(obj, schema);
-    return error ? error.details[0].message : null;
-  };
+  doSubmit = async () => {
+    if (this.props.match.params.id === 'new') {
+      const obj = { ...this.state.data };
+      const { data: user } = await axios.post(apiEndPoint, obj);
+      const users = [user, ...this.props.users];
 
-  handleSubmit = e => {
-    e.preventDefault();
-    const errors = this.validate();
-    this.setState({ errors: errors || {} });
-    if (errors) return;
-
+      // this.setState({ users });
+      // this.props.history.push('/');
+    } else {
+    }
     console.log('submit');
   };
 
-  handleChange = ({ currentTarget: input }) => {
-    const errors = { ...this.state.errors };
-    const errorMessage = this.validateProperty(input);
-    if (errorMessage) errors[input.name] = errorMessage;
-    else delete errors[input.name];
-
-    const user = { ...this.state.user };
-    user[input.name] = input.value;
-    this.setState({ user, errors });
-  };
-
   render() {
-    const { user, errors } = this.state;
     return (
       <div className="container">
         <h1>User Form</h1>
         <form onSubmit={this.handleSubmit}>
-          <Input
-            name="email"
-            label="Email"
-            value={user.email}
-            onChange={this.handleChange}
-            error={errors.email}
-          />
-          <Input
-            name="username"
-            label="Username"
-            value={user.username}
-            onChange={this.handleChange}
-            error={errors.username}
-          />
-          <Input
-            name="name"
-            label="Name"
-            value={user.name}
-            onChange={this.handleChange}
-            error={errors.name}
-          />
-          <Input
-            name="phone"
-            label="Phone"
-            value={user.phone}
-            onChange={this.handleChange}
-            error={errors.phone}
-          />
-          <Input
-            name="website"
-            label="Website"
-            value={user.website}
-            onChange={this.handleChange}
-            error={errors.website}
-          />
-          <button className="btn btn-primary">Submit</button>
+          {this.renderInput('email', 'Email')}
+          {this.renderInput('username', 'Username')}
+          {this.renderInput('name', 'Name')}
+          {this.renderInput('phone', 'Phone')}
+          {this.renderInput('website', 'Website')}
+          {this.renderButton('Save')}
         </form>
       </div>
     );

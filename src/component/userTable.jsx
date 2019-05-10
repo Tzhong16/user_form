@@ -5,7 +5,7 @@ class UserTable extends Component {
   render() {
     return (
       <div className="container">
-        <Link to="/userForm" className="btn btn-primary">
+        <Link to="/userForm/new" className="btn btn-primary">
           New User
         </Link>
 
@@ -23,7 +23,9 @@ class UserTable extends Component {
               <tr key={u.id}>
                 <td>{u.name}</td>
                 <td>
-                  <button className="btn btn-primary btn-sm"> Edit</button>
+                  <Link to={`/userForm/${u.id}`}>
+                    <button className="btn btn-primary btn-sm"> Edit</button>
+                  </Link>
                 </td>
               </tr>
             ))}
