@@ -7,7 +7,7 @@ import UserTable from './component/userTable';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import NotFound from './component/notFound';
 
-const apiEndPoint = 'http://jsonplaceholder.typicode.com/users';
+const apiEndPoint = 'https://jsonplaceholder.typicode.com/users';
 
 class App extends Component {
   state = { users: [] };
