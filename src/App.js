@@ -13,9 +13,15 @@ class App extends Component {
   state = { users: [] };
 
   async componentDidMount() {
-    const { data: users } = await axios.get(apiEndPoint);
-    this.setState({ users });
+    if (this.state.users.length === 0) {
+      const { data: users } = await axios.get(apiEndPoint);
+      this.setState({ users });
+    }
   }
+
+  handleCreate = data => {
+    console.log('clicked', data);
+  };
 
   render() {
     return (
@@ -33,6 +39,7 @@ class App extends Component {
           <Route path="/not-found" component={NotFound} />
           <Route
             path="/"
+            exact
             render={props => <UserTable {...props} users={this.state.users} />}
           />
           <Redirect to="/not-found" />

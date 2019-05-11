@@ -42,7 +42,6 @@ class UserForm extends Form {
 
     const { data: user } = await axios.get(apiEndPoint + '/' + userId);
     if (!user) return this.props.history.replace('/not-found');
-    console.log(user);
 
     this.setState({ data: this.mapToViewModel(user) });
   }
@@ -58,24 +57,25 @@ class UserForm extends Form {
     };
   }
 
-  doSubmit = async () => {
-    if (this.props.match.params.id === 'new') {
-      const obj = { ...this.state.data };
-      const { data: user } = await axios.post(apiEndPoint, obj);
-      const users = [user, ...this.props.users];
+  // doSubmit = () => {
+  //   this.props.history.push('/');
+  //   // if (this.props.match.params.id === 'new') {
+  //   // const obj = { ...this.state.data };
+  //   // const { data: user } = await axios.post(apiEndPoint, obj);
+  //   // const users = [user, ...this.props.users];
+  //   // this.setState({ users });
+  //   // } else {
+  //   //   this.props.history.push('/');
+  //   // }
 
-      // this.setState({ users });
-      // this.props.history.push('/');
-    } else {
-    }
-    console.log('submit');
-  };
+  //   // console.log('submit');
+  // };
 
   render() {
     return (
       <div className="container">
         <h1>User Form</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={() => this.handleSubmit(this.state.data)}>
           {this.renderInput('email', 'Email')}
           {this.renderInput('username', 'Username')}
           {this.renderInput('name', 'Name')}

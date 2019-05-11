@@ -27,13 +27,13 @@ class Form extends Component {
     return error ? error.details[0].message : null;
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
+  handleSubmit = data => {
     const errors = this.validate();
     this.setState({ errors: errors || {} });
     if (errors) return;
-
-    this.doSubmit();
+    console.log(data);
+    this.props.history.push('/');
+    // this.doSubmit(data);
   };
 
   handleChange = ({ currentTarget: input }) => {
