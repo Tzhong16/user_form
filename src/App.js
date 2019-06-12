@@ -1,49 +1,33 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import './App.css';
 import NavBar from './component/navBar';
 import UserForm from './component/userForm';
 import UserTable from './component/userTable';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './store';
 import NotFound from './component/notFound';
 
-const apiEndPoint = 'https://jsonplaceholder.typicode.com/users';
-
 class App extends Component {
-  state = { users: [] };
-
-  async componentDidMount() {
-    if (this.state.users.length === 0) {
-      const { data: users } = await axios.get(apiEndPoint);
-      this.setState({ users });
-    }
-  }
-
-  handleCreate = data => {
-    console.log('clicked', data);
-  };
-
   render() {
     return (
       <React.Fragment>
         <NavBar />
-        <Switch>
-          <Route
-            path="/userForm/:id"
-            render={props => <UserForm {...props} users={this.state.users} />}
-          />
-          <Route
-            path="/userForm/new"
-            render={props => <UserForm {...props} users={this.state.users} />}
-          />
-          <Route path="/not-found" component={NotFound} />
-          <Route
-            path="/"
-            exact
-            render={props => <UserTable {...props} users={this.state.users} />}
-          />
-          <Redirect to="/not-found" />
-        </Switch>
+        <Provider store={store}>
+          <Switch>
+            <Route
+              path="/userForm/new"
+              render={props => <UserForm {...props} />}
+            />
+            <Route
+              path="/userForm/:id"
+              render={props => <UserForm {...props} />}
+            />
+            <Route path="/not-found" component={NotFound} />
+            <Route path="/" exact render={props => <UserTable {...props} />} />
+            <Redirect to="/not-found" />
+          </Switch>
+        </Provider>
       </React.Fragment>
     );
   }
