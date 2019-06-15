@@ -6,18 +6,8 @@ import { fetchUsers } from '../actions/userAction';
 
 class UserTable extends Component {
   componentWillMount() {
-    this.props.fetchUsers();
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.newUser) {
-      this.props.users.unshift(newProps.newUser);
-      return;
-    }
-
-    if (newProps.updateUser) {
-      this.props.users.splice(newProps.updateUser.id, 1, newProps.updateUser);
-      this.props.users.shift(); //zen me gao?
+    if (!this.props.users.length) {
+      this.props.fetchUsers();
     }
   }
 
@@ -57,15 +47,11 @@ class UserTable extends Component {
 
 postMessage.propTypes = {
   fetchUsers: PropTypes.func.isRequired,
-  users: PropTypes.array.isRequired,
-  newUser: PropTypes.object,
-  updateUser: PropTypes.object
+  users: PropTypes.array.isRequired
 };
 
 const mapStateToProps = state => ({
-  users: state.users.items,
-  newUser: state.users.item,
-  updateUser: state.users.updatedUser
+  users: state.users.items
 });
 
 export default connect(

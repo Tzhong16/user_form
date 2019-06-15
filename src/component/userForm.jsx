@@ -3,10 +3,8 @@ import Joi from 'joi-browser';
 import Form from './common/form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import { createUsers, updateUser } from '../actions/userAction';
 
-const apiEndPoint = 'https://jsonplaceholder.typicode.com/users';
+import { createUsers, updateUser } from '../actions/userAction';
 
 class UserForm extends Form {
   state = {
@@ -39,16 +37,21 @@ class UserForm extends Form {
       .label('Website')
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    console.log('--', this.props);
     const userId = this.props.match.params.id;
     if (userId === 'new') return;
 
-    // this.props.fetchUserById(userId);
-    const { data: user } = await axios.get(apiEndPoint + '/' + userId);
-    if (!user) return this.props.history.replace('/not-found');
-    // const user = this.props.item;
-
-    this.setState({ data: this.mapToViewModel(user) });
+    for (let key in this.props.users) {
+      if (this.props.users[key].id === Number(userId)) {
+        this.setState({ data: this.mapToViewModel(this.props.users[key]) });
+      }
+    }
+    // // this.props.fetchUserById(userId);
+    // const { data: user } = await axios.get(apiEndPoint + '/' + userId);
+    // if (!user) return this.props.history.replace('/not-found');
+    // // const user = this.props.item;
+    // this.setState({ data: this.mapToViewModel(user) });
   }
 
   mapToViewModel(user) {
@@ -97,7 +100,11 @@ UserForm.propTypes = {
   createUsers: PropTypes.func.isRequired
 };
 
+const mapStateToProps = state => ({
+  users: state.users.items
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   { createUsers, updateUser }
 )(UserForm);
