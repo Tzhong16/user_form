@@ -38,7 +38,6 @@ class UserForm extends Form {
   };
 
   componentDidMount() {
-    console.log('--', this.props);
     const userId = this.props.match.params.id;
     if (userId === 'new') return;
 
@@ -49,6 +48,7 @@ class UserForm extends Form {
     }
     // // this.props.fetchUserById(userId);
     // const { data: user } = await axios.get(apiEndPoint + '/' + userId);
+
     // if (!user) return this.props.history.replace('/not-found');
     // // const user = this.props.item;
     // this.setState({ data: this.mapToViewModel(user) });
