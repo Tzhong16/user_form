@@ -46,6 +46,7 @@ class UserForm extends Form {
         this.setState({ data: this.mapToViewModel(this.props.users[key]) });
       }
     }
+
     // // this.props.fetchUserById(userId);
     // const { data: user } = await axios.get(apiEndPoint + '/' + userId);
 
